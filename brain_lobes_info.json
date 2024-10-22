@@ -1,0 +1,74 @@
+{
+  "Frontal Lobe": {
+    "disadvantages": [
+      "Responsible for decision-making and problem-solving.",
+      "Damage can lead to personality changes, such as aggression or apathy.",
+      "Impaired judgment may occur, leading to poor decision-making.",
+      "May cause difficulty in concentrating or maintaining attention.",
+      "Increased risk of impulsive behavior and lack of inhibition.",
+      "Damage may result in speech and communication difficulties."
+    ],
+    "functionalities": [
+      "Involved in planning, reasoning, movement, and speech.",
+      "Crucial for executive functions like goal-setting and decision-making.",
+      "Plays a role in social behavior and understanding others' emotions.",
+      "Important for controlling voluntary motor movements.",
+      "Supports problem-solving and logical thinking."
+    ],
+    "doctor_tips": [
+      "Monitor for behavioral changes such as mood swings or aggression.",
+      "Cognitive therapy may be beneficial for improving decision-making and problem-solving.",
+      "Consider occupational therapy to help with motor function impairments.",
+      "Speech therapy may be needed if there are communication difficulties.",
+      "Encourage activities that stimulate executive functions, like puzzles or memory games."
+    ]
+  },
+  "Parietal Lobe": {
+    "disadvantages": [
+      "Difficulty with spatial orientation and navigation.",
+      "Problems with hand-eye coordination and fine motor skills.",
+      "Difficulty identifying parts of the body (left-right confusion).",
+      "Inability to recognize objects by touch (astereognosis).",
+      "Damage can affect the ability to perceive temperature and pain accurately.",
+      "Neglect of one side of the body, especially after a stroke."
+    ],
+    "functionalities": [
+      "Processes sensory information related to touch, temperature, and pain.",
+      "Involved in spatial awareness and navigation.",
+      "Helps integrate sensory input to form perceptions of the world.",
+      "Important for distinguishing size, shape, and texture of objects.",
+      "Plays a role in understanding written language and mathematics."
+    ],
+    "doctor_tips": [
+      "Use visual cues to aid spatial awareness and navigation for patients.",
+      "Physical therapy may help improve coordination and fine motor skills.",
+      "Encourage sensory stimulation exercises to improve tactile recognition.",
+      "Cognitive rehabilitation may help with attention and visual-spatial deficits.",
+      "Monitor for safety, as patients may not perceive pain or temperature correctly."
+    ]
+  },
+  "Occipital Lobe": {
+    "disadvantages": [
+      "Visual field deficits may occur, such as loss of vision in part of the visual field.",
+      "Difficulty recognizing objects or faces (visual agnosia).",
+      "Problems with color perception or seeing moving objects.",
+      "Inability to identify written words (alexia).",
+      "Damage may result in hallucinations or visual distortions.",
+      "Difficulty judging distances or perceiving depth."
+    ],
+    "functionalities": [
+      "Responsible for visual processing, including color perception and motion detection.",
+      "Essential for recognizing shapes, colors, and patterns.",
+      "Plays a role in detecting and interpreting visual movement.",
+      "Helps process visual information from the eyes and integrate it with other senses.",
+      "Supports depth perception and spatial orientation based on visual input."
+    ],
+    "doctor_tips": [
+      "Regular eye examinations to monitor visual changes and any field deficits.",
+      "Visual aids and magnifiers may help with object recognition difficulties.",
+      "Consider occupational therapy for visual-perceptual training.",
+      "Encourage activities that stimulate visual processing, like puzzles or drawing.",
+      "Use brightly colored or high-contrast items to help with vision deficits."
+    ]
+  }
+}
