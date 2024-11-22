@@ -19,7 +19,7 @@
         justify-content: center;
         align-items: center;
         font-family: Arial, sans-serif;
-        background-image: url('/static/digital-low-poly-abstract-background-with-connecting-lines-dots_1048-7925.jpg');
+        background-image: url("/static/digital-low-poly-abstract-background-with-connecting-lines-dots_1048-7925.jpg");
         background-repeat: no-repeat; /* Prevent tiling */
         background-size: cover; /* Ensure the image covers the entire background */
         background-position: center; /* Center the image */
@@ -69,6 +69,31 @@
         color: #666;
         margin-top: 10px;
       }
+
+      #loading {
+        display: none;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .spinner {
+        margin: 20px auto;
+        border: 8px solid #f3f3f3;
+        border-top: 8px solid #007bff;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
     </style>
   </head>
   <body>
@@ -78,10 +103,34 @@
       </h1>
       <h1>Upload MRI Image</h1>
       <p>Select a file to upload for error detection:</p>
-      <form action="/upload" method="POST" enctype="multipart/form-data">
+      <form
+        id="uploadForm"
+        action="/upload"
+        method="POST"
+        enctype="multipart/form-data"
+        onsubmit="delaySubmission(event)"
+      >
         <input type="file" name="file" required />
         <input type="submit" value="Upload Image" />
       </form>
+
+      <!-- Loading Spinner -->
+      <div id="loading">
+        <p>Processing your image, please wait...</p>
+        <div class="spinner"></div>
+      </div>
     </div>
+
+    <script>
+      function delaySubmission(event) {
+        event.preventDefault(); // Prevent immediate form submission
+        const form = document.getElementById("uploadForm");
+        document.getElementById("loading").style.display = "block"; // Show loading spinner
+
+        setTimeout(() => {
+          form.submit();
+        }, 200); // Delay in milliseconds (5000ms = 5 seconds)
+      }
+    </script>
   </body>
 </html>

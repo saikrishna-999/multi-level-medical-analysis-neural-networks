@@ -38,6 +38,20 @@
       li {
         margin-bottom: 5px;
       }
+      .back-link {
+        display: block;
+        width: fit-content;
+        margin-top: 30px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        text-align: center;
+        border-radius: 5px;
+        text-decoration: none;
+      }
+      .back-link:hover {
+        background-color: #0056b3;
+      }
     </style>
   </head>
   <body>
@@ -47,26 +61,44 @@
       {% for region, info in report_data.items() %}
       <div class="lobe-section">
         <h2>{{ region }}</h2>
+
         <h3>Disadvantages:</h3>
+        {% if info['disadvantages'] %}
         <ul>
           {% for disadvantage in info['disadvantages'] %}
           <li>{{ disadvantage }}</li>
           {% endfor %}
         </ul>
+        {% else %}
+        <p>No disadvantages information available.</p>
+        {% endif %}
+
         <h3>Functionalities:</h3>
+        {% if info['functionalities'] %}
         <ul>
           {% for functionality in info['functionalities'] %}
           <li>{{ functionality }}</li>
           {% endfor %}
         </ul>
+        {% else %}
+        <p>No functionalities information available.</p>
+        {% endif %}
+
         <h3>Doctor Tips:</h3>
+        {% if info['doctor_tips'] %}
         <ul>
           {% for tip in info['doctor_tips'] %}
           <li>{{ tip }}</li>
           {% endfor %}
         </ul>
+        {% else %}
+        <p>No doctor tips available.</p>
+        {% endif %}
       </div>
       {% endfor %}
+
+      <!-- Back to the upload page link -->
+      <a href="/" class="back-link">Back to Upload Page</a>
     </div>
   </body>
 </html>

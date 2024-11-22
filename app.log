@@ -1,0 +1,20 @@
+2024-11-15 16:02:02,126 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-11-15 16:02:02,126 INFO: [33mPress CTRL+C to quit[0m
+2024-11-15 16:02:02,126 INFO:  * Restarting with stat
+2024-11-15 16:02:08,518 WARNING:  * Debugger is active!
+2024-11-15 16:02:08,554 INFO:  * Debugger PIN: 510-815-763
+2024-11-15 16:02:08,776 INFO: 127.0.0.1 - - [15/Nov/2024 16:02:08] "GET / HTTP/1.1" 200 -
+2024-11-15 16:02:08,851 INFO: 127.0.0.1 - - [15/Nov/2024 16:02:08] "[36mGET /static/digital-low-poly-abstract-background-with-connecting-lines-dots_1048-7925.jpg HTTP/1.1[0m" 304 -
+2024-11-15 16:02:09,023 INFO: 127.0.0.1 - - [15/Nov/2024 16:02:09] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2024-11-15 16:02:13,536 ERROR: Error during prediction or graph generation: Exception encountered when calling Sequential.call().
+
+[1mInput 0 of layer "dense" is incompatible with the layer: expected axis -1 of input shape to have value 246016, but received input with shape (1, 12544)[0m
+
+Arguments received by Sequential.call():
+  • inputs=tf.Tensor(shape=(1, 64, 64, 1), dtype=float32)
+  • training=False
+  • mask=None
+2024-11-15 16:02:13,541 INFO: 127.0.0.1 - - [15/Nov/2024 16:02:13] "[35m[1mPOST /upload HTTP/1.1[0m" 500 -
+2024-11-15 16:04:27,710 INFO:  * Detected change in 'C:\\Users\\saikr\\OneDrive\\Desktop\\MRI_Error_Detection_Project\\app.py', reloading
+2024-11-15 16:04:29,369 INFO:  * Restarting with stat

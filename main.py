@@ -1,146 +1,87 @@
-from flask import Flask, request, jsonify, render_template
 import os
 import cv2
 import numpy as np
-from tensorflow.keras.models import load_model
-import uuid
-import matplotlib
-matplotlib.use('Agg')  # Use a non-interactive backend
+import tensorflow as tf
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.models import Sequential, load_model
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
 import matplotlib.pyplot as plt
-from io import BytesIO
-import base64
 
-app = Flask(__name__)
-
-# Load the trained model globally
-model = load_model('models/mri_error_detector.keras')
-
-# Path to the baseline images directory
-BASELINE_IMAGE_DIR = r'C:\Users\saikr\OneDrive\Desktop\MRI_Error_Detection_Project\Brain MRI Images\Validation\Normal'
-
-# Preprocessing function for the image
+# 1. Preprocessing Function
 def preprocess_image(image_path):
-    try:
-        img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-        if img is None:
-            raise ValueError(f"Could not read the image: {image_path}")
-        img_resized = cv2.resize(img, (64, 64, 64))  # Resizing for 3D CNN (adjust dimensions as necessary)
-        img_normalized = img_resized / 255.0
-        return img_normalized
-    except Exception as e:
-        print(f"Error during image preprocessing: {e}")
-        return None
+    img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    img_resized = cv2.resize(img, (256, 256))
+    return img_resized / 255.0
 
-# Function to highlight differences in the image
-def highlight_differences(original_image_path, is_abnormal):
-    original_image = cv2.imread(original_image_path)
+# 2. Load Data from 'Brain_MRI_Images/' folder
+def load_data(data_dir):
+    images, labels = [], []
+    for label in ["Normal", "Tumor"]:  # Class folders based on new structure
+        folder = os.path.join(data_dir, label)
+        for filename in os.listdir(folder):
+            img_path = os.path.join(folder, filename)
+            img = preprocess_image(img_path)
+            images.append(img)
+            labels.append(1 if label == "Tumor" else 0)  # Assign 1 for Tumor, 0 for Normal
+    return np.array(images), np.array(labels)
 
-    if is_abnormal:
-        # Placeholder logic for where to place the red dot
-        # You can adjust this logic to determine the actual lesion location
-        # Randomly generate positions for the sake of demonstration
-        for _ in range(3):  # Limit to a maximum of 3 dots
-            x = np.random.randint(0, original_image.shape[1])
-            y = np.random.randint(0, original_image.shape[0])
-            cv2.circle(original_image, (x, y), 10, (0, 0, 255), -1)  # Draw a red dot
+# Load training and validation data
+train_data, train_labels = load_data("Brain MRI Images/Train/")
+val_data, val_labels = load_data("Brain MRI Images/Validation/")
 
-    return original_image
+# 3. Create CNN Model
+def build_model():
+    model = Sequential([
+        Conv2D(32, (3, 3), activation='relu', input_shape=(256, 256, 1)),
+        MaxPooling2D((2, 2)),
+        Conv2D(64, (3, 3), activation='relu'),
+        MaxPooling2D((2, 2)),
+        Flatten(),
+        Dense(64, activation='relu'),
+        Dense(1, activation='sigmoid')
+    ])
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    return model
 
-# Function to convert image to base64
-def image_to_base64(image):
-    _, buffer = cv2.imencode('.png', image)
-    img_base64 = base64.b64encode(buffer).decode('utf-8')
-    return img_base64
+# 4. Train and Evaluate Model
+X_train, X_test, y_train, y_test = train_test_split(train_data, train_labels, test_size=0.2, random_state=42)
 
-# Prediction and graph generation function
-def predict_and_generate_graph(file_path):
-    try:
-        img = preprocess_image(file_path)
-        if img is None:
-            return None, 'Error: Image preprocessing failed'
+# Reshape for CNN input
+X_train = X_train.reshape(-1, 256, 256, 1)
+X_test = X_test.reshape(-1, 256, 256, 1)
 
-        img = img.reshape(1, 64, 64, 64, 1)  # Adjust shape for 3D CNN
-        prediction = model.predict(img)
-        prediction_value = prediction[0][0]
+model = build_model()
+model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test))
 
-        # Define threshold and result
-        threshold = 0.5
-        result = 'Normal' if prediction_value < threshold else 'Abnormal'
+# 5. Evaluate the Model
+test_loss, test_accuracy = model.evaluate(X_test, y_test)
+print(f"Test Loss: {test_loss}, Test Accuracy: {test_accuracy}")
 
-        # Generate the graph
-        fig, ax = plt.subplots()
-        categories = ['Normal', 'Abnormal']
-        probabilities = [1 - prediction_value, prediction_value]
+# 6. Save Model
+model.save('models/mri_error_detector.keras')
+print("Model training complete and saved.")
 
-        ax.bar(categories, probabilities, color=['green', 'red'])
-        ax.set_ylim([0, 1])
-        ax.set_ylabel('Probability')
-        ax.set_title('MRI Error Detection')
+# 7. Make Predictions (example)
+def make_predictions(model, new_images):
+    predictions = model.predict(new_images)
+    return predictions
 
-        # Save the graph to a BytesIO object
-        img_io = BytesIO()
-        plt.savefig(img_io, format='png')
-        img_io.seek(0)
+# Example usage for predictions
+# Assuming you have new images loaded and preprocessed
+# new_images = [preprocess_image(img_path) for img_path in new_image_paths]
+# new_images = np.array(new_images).reshape(-1, 256, 256, 1)  # Reshape as needed
+# predictions = make_predictions(model, new_images)
 
-        # Encode the graph as base64
-        img_base64 = base64.b64encode(img_io.getvalue()).decode('utf-8')
-        plt.close(fig)
+# 8. Visualize Predictions (example)
+def visualize_predictions(images, predictions):
+    for i in range(len(images)):
+        plt.imshow(images[i].reshape(256, 256), cmap='gray')
+        plt.title('Predicted: ' + ('Tumor' if predictions[i] > 0.5 else 'Normal'))
+        plt.axis('off')
+        plt.show()
 
-        return img_base64, result
+# Assuming new_images is prepared and predictions made
+# visualize_predictions(new_images, predictions)
 
-    except Exception as e:
-        print(f"Error during prediction or graph generation: {e}")
-        return None, 'Error: Prediction failed'
-
-# Route for the upload form
-@app.route('/')
-def index():
-    return render_template('upload.html')
-
-# Route to handle the file upload and display results
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file uploaded'}), 400
-
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-
-    # Ensure 'uploads' directory exists
-    upload_dir = 'uploads'
-    os.makedirs(upload_dir, exist_ok=True)
-
-    # Generate a unique filename
-    file_ext = file.filename.rsplit('.', 1)[1].lower()
-    unique_filename = f"{uuid.uuid4()}.{file_ext}"
-    file_path = os.path.join(upload_dir, unique_filename)
-
-    try:
-        # Save the uploaded file temporarily
-        file.save(file_path)
-
-        # Make prediction and generate the graph
-        img_base64, result = predict_and_generate_graph(file_path)
-
-        if img_base64 is None:
-            return jsonify({'error': result}), 500
-
-        # Highlight differences on the uploaded image
-        is_abnormal = result == 'Abnormal'
-        highlighted_image = highlight_differences(file_path, is_abnormal)
-        highlighted_image_base64 = image_to_base64(highlighted_image)
-
-        # Clean up the file after prediction
-        os.remove(file_path)
-
-        # Render the result page with the prediction result, graph, and highlighted image
-        return render_template('result.html', prediction=result, graph=img_base64, highlighted_image=highlighted_image_base64)
-
-    except Exception as e:
-        print(f"Error during file upload or prediction: {e}")
-        return jsonify({'error': 'File upload or prediction failed'}), 500
-
-# Run the app
-if __name__ == '__main__':
-    app.run(debug=True)
+# Load saved model (if needed later)
+# model = load_model('models/mri_error_detector.keras')

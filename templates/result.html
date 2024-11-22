@@ -34,7 +34,7 @@
 
       h1 {
         color: #333;
-        font-size: 2rem;
+        font-size: 2.5rem;
         margin-bottom: 20px;
       }
 
@@ -84,19 +84,65 @@
         font-size: 1.2rem;
         color: #333;
       }
+
+      .prediction-section {
+        margin-bottom: 30px;
+      }
+
+      .comparison-section {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+      }
+
+      .comparison-box {
+        width: 48%;
+        padding: 20px;
+        background-color: #f0f8ff;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .regions-section ul {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+      }
+
+      .regions-section li {
+        background-color: #e2f3ff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: #007bff;
+        font-weight: bold;
+        text-transform: capitalize;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <h1>MRI Prediction and Analysis</h1>
 
-      <h2>The MRI is {{ prediction }}</h2>
+      <!-- Displaying the CNN and Random Forest prediction results -->
+      <div class="prediction-section">
+        <h2>
+          CNN Prediction: {{ cnn_prediction }} (Confidence: {{ cnn_confidence
+          }})
+        </h2>
+        <h2>
+          Random Forest Prediction: {{ rf_prediction }} (Confidence: {{
+          rf_confidence }})
+        </h2>
+      </div>
 
+      <!-- Displaying the prediction comparison graph -->
       <div class="graph-section">
-        <h2>Prediction Graph</h2>
+        <h2>Prediction Graph (CNN vs RF)</h2>
         <img src="data:image/png;base64,{{ graph }}" alt="Prediction Graph" />
       </div>
 
+      <!-- Displaying the highlighted MRI image -->
       <div class="highlighted-section">
         <h2>Highlighted MRI Analysis</h2>
         <img
@@ -105,6 +151,7 @@
         />
       </div>
 
+      <!-- Displaying affected brain regions if any -->
       {% if affected_region_names %}
       <div class="regions-section">
         <h2>Affected Brain Regions</h2>
@@ -113,13 +160,14 @@
           <li>{{ region }}</li>
           {% endfor %}
         </ul>
-        <!-- Link to the report page -->
+        <!-- Link to the detailed report page -->
         <a href="{{ url_for('report', regions=affected_region_names) }}"
           >View Detailed Report</a
         >
       </div>
       {% endif %}
 
+      <!-- Link to upload another MRI image -->
       <a href="/">Upload Another MRI Image</a>
     </div>
   </body>
